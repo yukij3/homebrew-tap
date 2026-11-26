@@ -13,9 +13,8 @@ cask "atmos-control" do
   app "atmos-control.app"
 
   # The app is self-signed and not notarized; without this Gatekeeper blocks the first launch.
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-dr", "com.apple.quarantine", "#{appdir}/atmos-control.app"]
+  postflight_steps do
+    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{appdir}}/atmos-control.app"]
   end
 
   uninstall quit: "dev.atmoscontrol.app"

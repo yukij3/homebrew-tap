@@ -15,15 +15,15 @@ cask "atmos-control-driver" do
 
   # coreaudiod only loads HAL drivers at startup. It is a KeepAlive daemon, so launchd
   # restarts it right away; `launchctl kickstart` is refused with SIP on, killall is not.
-  postflight do
-    driver = "/Library/Audio/Plug-Ins/HAL/atmos-control.driver"
-    system_command "/usr/sbin/chown", args: ["-R", "root:wheel", driver], sudo: true
-    system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", driver], sudo: true
-    system_command "/usr/bin/killall", args: ["coreaudiod"], sudo: true
+  postflight_steps do
+    run "/usr/sbin/chown", args: ["-R", "root:wheel", "/Library/Audio/Plug-Ins/HAL/atmos-control.driver"], sudo: true
+    run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "/Library/Audio/Plug-Ins/HAL/atmos-control.driver"],
+                          sudo: true
+    run "/usr/bin/killall", args: ["coreaudiod"], sudo: true
   end
 
-  uninstall_postflight do
-    system_command "/usr/bin/killall", args: ["coreaudiod"], sudo: true
+  uninstall_postflight_steps do
+    run "/usr/bin/killall", args: ["coreaudiod"], sudo: true, must_succeed: false
   end
 
   caveats <<~EOS
